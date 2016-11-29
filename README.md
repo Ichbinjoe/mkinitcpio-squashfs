@@ -13,6 +13,7 @@ List of supported protocols:
   * HTTPS
   * FTP
   * NFS
+  * TFTP
 
 Kernel parameters:
 ------------------
@@ -26,6 +27,10 @@ Kernel parameters:
 For remote HTTP(s) or FTP location just use URL for example:
 
 * squashfs=http://192.168.1.1/images/archlinux.squashfs
+
+For remote TFTP location use URL for example:
+
+* squashfs=tftp://192.168.1.1/images/archlinux.squashfs
 
 For NFS location use following syntax:
 

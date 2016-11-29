@@ -141,6 +141,33 @@ mount_handler_squashfs() {
 
 			squashfs_source_postmount "${imagedev_mountpoint}" "${nfs_img_path}"
 		;;
+        tftp://* )
+            msg "Detected TFTP image source..."
+            tftp_url="${squashfs##*://}"
+            tftp_host="${tftp_url%%/*}"
+            tftp_port="${tftp_host##*:}"
+            tftp_hostname="${tftp_host%%:*}"
+            tftp_path="${tftp_url#*/}"
+
+            if [ -z "$tftp_port" ]; then
+                tftp_port="69"
+            fi
+
+            squashfs_prepare_tmpfs
+			tftp ${tftp_hostname} ${tftp_port} -c get "${tftp_path}" "${squashfs_imagepath}"
+			if [[ ! $? -eq 0 ]]; then
+				err "Unable to download SquashFS image from ${squashfs}..."
+				echo "Please check your network connection and image URL..."
+				echo "You are being dropped to a recovery shell"
+				echo "  Try to fix the problem - place SquashFS image"
+				echo "  in ${squashfs_imagepath}"
+				echo
+				echo "  If you will be ready - type 'exit' to try"
+				echo "  and continue booting"
+				launch_interactive_shell
+				msg "Trying to continue..."
+			fi
+        ;;
 		* )
 			err "Unsupported squashfs value..."
 			return 100
